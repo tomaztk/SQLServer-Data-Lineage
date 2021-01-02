@@ -1,7 +1,7 @@
 USE QL;
 GO
 
-DECLARE @sql VARCHAR(400) = '
+DECLARE @sql VARCHAR(500) = '
 -- Query
 /* This is our Query */
 
@@ -13,11 +13,18 @@ s.Name
 ,d.DepartmentName
 -- Comment here
 -- /*,d.DepartmentID*/
+/* This is a comment */ -- works
+---------------------
+/* this is a inline comment
+in two lines  */
+/* /* this is a double comment */*/ -- works
+,''test'' AS test
+/*/* comment */*/ --nope
 FROM Students AS s
 JOIN Departments AS D
 ON d.DepartmentId = s.DepartmentId'
 
-DECLARE @comment VARCHAR(400)
+DECLARE @comment VARCHAR(500)
 DECLARE @endPosition INT
 DECLARE @startPosition INT
 DECLARE @commentLen INT
@@ -25,6 +32,11 @@ DECLARE @substrlen INT
 DECLARE @len INT
 
 PRINT @sql
+
+
+-- works fine with single comments block
+-- works fine with double (inline) comment block
+-- works fine with multi-line comment blocks
 
 WHILE (CHARINDEX('/*',@sql)<>0)
 BEGIN
