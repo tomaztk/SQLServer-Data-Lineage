@@ -127,7 +127,35 @@ END
 
 SELECT * FROM dbo.TableQeury
 
+/*----
 
+
+DECLARE @nofRows INT = 1
+DECLARE @LastLB INT = 0
+DECLARE @Com INT = 0 
+
+--SET @Com = CHARINDEX('--', @sql,@com)
+SET @Com = PATINDEX('%--%', @SQL)
+DECLARE @POS INT = 0
+
+SET @LastLB = CHARINDEX(CHAR(10), @sql, @LastLB)
+WHILE @LastLB>=1
+BEGIN
+	INSERT INTO dbo.TableQeury 
+	SELECT @nofrows, @Com,  @lastLB
+    SET @nofRows =+ 1
+    SET @LastLB = CHARINDEX(CHAR(10) ,@sql,  @LastLB+1)
+	SET @POS = @LASTLB-1
+	--SET @Com = CHARINDEX('--',@sql, @lastlb-(@nofRows*2))
+	SET @Com = PATINDEX('%--%',SUBSTRING(@SQL,@LastLB+1, LEN(@SQL)))
+	print @com
+	-- IF @Com > @LastLB-2  SET @com = @lastLB
+END
+
+
+SELECT * FROM dbo.TableQeury
+
+------ */
 
 ##################################
 
