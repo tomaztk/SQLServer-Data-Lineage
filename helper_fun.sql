@@ -85,6 +85,22 @@ PRINT @sql
 
 */
 
+-- number of rows in query
+DECLARE @nofRows INT = 1
+DECLARE @LastLB int = 0
+
+SET @LastLB = CHARINDEX(CHAR(10), @sql, @LastLB)
+WHILE @LastLB>=1 
+BEGIN
+    SET @nofRows=@nofRows+1
+    SET @LastLB=CHARINDEX(CHAR(10) ,@sql,  @LastLB+1)
+END
+
+PRINT @nofRows
+
+
+
+
 DECLARE  @comm TABLE (pos INT)
 DECLARE @pos INT
 DECLARE @oldpos INT = 0
