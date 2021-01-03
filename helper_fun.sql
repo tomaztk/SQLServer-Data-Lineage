@@ -86,19 +86,50 @@ PRINT @sql
 */
 
 -- number of rows in query
+-- with position of comments and Line Breaks
+
+USE QL;
+DROP TABLE IF EXISTS dbo.TableQeury;
+
+CREATE TABLE dbo.TableQeury (
+ID INT Identity(1,1)
+,rowID INT 
+,Comm_positton INT
+,LB_position INT)
+
+DECLARE @sql VARCHAR(500) = '-- Query
+SELECT top 10 
+ [name]
+,object_id
+--,principal_id
+--,schema_did
+,schema_id
+from sys.tables'
+
+PRINT @SQL
+
 DECLARE @nofRows INT = 1
-DECLARE @LastLB int = 0
+DECLARE @LastLB INT = 0
+DECLARE @Com INT = 0 
+
+SET @Com = CHARINDEX('--', @sql,@com)
+PRINT @com
 
 SET @LastLB = CHARINDEX(CHAR(10), @sql, @LastLB)
-WHILE @LastLB>=1 
+WHILE @LastLB>=1
 BEGIN
+	INSERT INTO dbo.TableQeury VALUES (@nofrows, @Com,  @lastLB)
     SET @nofRows=@nofRows+1
     SET @LastLB=CHARINDEX(CHAR(10) ,@sql,  @LastLB+1)
+	SET @Com = CHARINDEX('--',@sql, @LastLB)
 END
 
-PRINT @nofRows
+
+SELECT * FROM dbo.TableQeury
 
 
+
+##################################
 
 
 DECLARE  @comm TABLE (pos INT)
