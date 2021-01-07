@@ -84,9 +84,10 @@ END
 PRINT @sql
 
 */
-
+-- ******************************************************
 -- number of rows in query
 -- with position of comments and Line Breaks
+-- ******************************************************
 
 USE QL;
 DROP TABLE IF EXISTS dbo.TableQeury;
@@ -106,26 +107,42 @@ SELECT top 10
 ,schema_id
 from sys.tables'
 
-PRINT @SQL
+DROP TABLE IF EXISTS dbo.SQL
+CREATE TABLE dbo.SQL (
+    ID INT IDENTITY(1,1)
+    ,TXT NVARCHAR(MAX)
+)
+ 
+INSERT INTO dbo.[SQL]
+SELECT @SQL
+
+-- At the end...always add CR\LB
+--SET @sql = @sql + CHAR(13)
+UPDATE dbo.[SQL]
+SET txt = txt +  CHAR(10)
+
+--PRINT @SQL
+SELECT * FROM dbo.SQL
 
 DECLARE @nofRows INT = 1
 DECLARE @LastLB INT = 0
 DECLARE @Com INT = 0 
 
-SET @Com = CHARINDEX('--', @sql,@com)
+SET @Com = (SELECT CHARINDEX('--', txt,@com) FROM dbo.SQL)
 PRINT @com
 
-SET @LastLB = CHARINDEX(CHAR(10), @sql, @LastLB)
+SET @LastLB = (SELECT CHARINDEX(CHAR(10), txt, @LastLB) FROM dbo.SQL)
 WHILE @LastLB>=1
 BEGIN
 	INSERT INTO dbo.TableQeury VALUES (@nofrows, @Com,  @lastLB)
     SET @nofRows=@nofRows+1
-    SET @LastLB=CHARINDEX(CHAR(10) ,@sql,  @LastLB+1)
-	SET @Com = CHARINDEX('--',@sql, @LastLB)
+    SET @LastLB= (SELECT CHARINDEX(CHAR(10) ,txt,  @LastLB+1) FROM dbo.SQL)
+	SET @Com = (SELECT CHARINDEX('--',txt, @LastLB) FROM dbo.SQL)
 END
 
 
 SELECT * FROM dbo.TableQeury
+
 
 /*----
 
