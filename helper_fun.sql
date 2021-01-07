@@ -117,7 +117,6 @@ INSERT INTO dbo.[SQL]
 SELECT @SQL
 
 -- At the end...always add CR\LB
---SET @sql = @sql + CHAR(13)
 UPDATE dbo.[SQL]
 SET txt = txt +  CHAR(10)
 
