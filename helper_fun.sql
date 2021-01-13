@@ -90,6 +90,8 @@ PRINT @sql
 -- ******************************************************
 
 USE QL;
+
+
 DROP TABLE IF EXISTS dbo.TableQeury;
 
 CREATE TABLE dbo.TableQeury (
