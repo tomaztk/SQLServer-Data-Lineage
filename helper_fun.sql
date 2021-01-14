@@ -198,3 +198,27 @@ END
 
 SELECT * FROM @comm
 PRINT @SQL
+
+
+----------------
+DECLARE  @comm TABLE (pos INT)
+DECLARE @pos INT
+DECLARE @oldpos INT = 0
+SELECT @pos = CHARINDEX('--',@sql) 
+DECLARE @REP VARCHAR(MAX) = ''
+
+WHILE @pos > 0 AND @oldpos <> @pos
+BEGIN
+   INSERT INTO @comm VALUES(@pos)
+   SELECT @oldpos=@pos
+   SELECT @pos=CHARINDEX('--',Substring(@sql,@pos + 2,len(@sql))) + @pos
+   SET @sql = REPLACE(@sql, @rep, '')
+   print(@sql)
+   SET @REP = SUBSTRING(@SQL, @oldpos, CHARINDEX(CHAR(10), @sql))
+   --print (charindex(char(10),@sql))
+
+END
+
+SELECT * FROM @comm
+PRINT @SQL
+
