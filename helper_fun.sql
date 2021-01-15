@@ -222,3 +222,8 @@ END
 SELECT * FROM @comm
 PRINT @SQL
 
+
+sp_execute_external_script
+@language = N'R'
+,@script = N''
+,@input_data_1 = 'SELECT * FROM @comm'
