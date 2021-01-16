@@ -200,6 +200,8 @@ SELECT * FROM @comm
 PRINT @SQL
 
 
+
+
 ----------------
 DECLARE  @comm TABLE (pos INT)
 DECLARE @pos INT
