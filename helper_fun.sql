@@ -144,6 +144,12 @@ END
 
 SELECT * FROM dbo.TableQeury
 
+-- Get number of rows
+declare @q_nofrows varchar(4000) = (SELECT TXT from dbo.sql)
+print @q_nofrows
+
+select len(@q_nofrows) - len(replace(@q_nofrows, CHAR(10),''))
+
 
 /*----
 
@@ -217,15 +223,17 @@ BEGIN
    SET @sql = REPLACE(@sql, @rep, '')
    print(@sql)
    SET @REP = SUBSTRING(@SQL, @oldpos, CHARINDEX(CHAR(10), @sql))
-   --print (charindex(char(10),@sql))
+   --PRINT (charindex(char(10),@sql))
 
 END
 
 SELECT * FROM @comm
 PRINT @SQL
 
-
+/*
 sp_execute_external_script
 @language = N'R'
 ,@script = N''
 ,@input_data_1 = 'SELECT * FROM @comm'
+*/
+
