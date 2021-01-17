@@ -237,3 +237,13 @@ sp_execute_external_script
 ,@input_data_1 = 'SELECT * FROM @comm'
 */
 
+
+---start and end of line
+DECLARE @nofRows INT = 1
+DECLARE @LastLB INT = 0
+DECLARE @Com INT = 0 
+
+declare @q_nofrows varchar(4000) = (SELECT TXT from dbo.sql)
+print @q_nofrows
+
+select len(@q_nofrows) - len(replace(@q_nofrows, CHAR(10),''))
