@@ -237,13 +237,90 @@ sp_execute_external_script
 ,@input_data_1 = 'SELECT * FROM @comm'
 */
 
+-- new v. 17.01.2021
 
----start and end of line
+DROP TABLE IF EXISTS dbo.TableQeury;
+
+CREATE TABLE dbo.TableQeury (
+ID INT Identity(1,1)
+,rowID INT 
+,Comm_positton INT
+,LB_position INT)
+
+DECLARE @sql VARCHAR(500) = '-- Query
+SELECT top 10 
+ [name]
+,object_id
+--,principal_id
+--,schema_did
+,schema_id
+from sys.tables'
+
+DROP TABLE IF EXISTS dbo.SQL
+CREATE TABLE dbo.SQL (
+    ID INT IDENTITY(1,1)
+    ,TXT NVARCHAR(MAX)
+)
+ 
+INSERT INTO dbo.[SQL]
+SELECT @SQL
+
+-- At the end...always add CR\LB
+UPDATE dbo.[SQL]
+SET txt = txt +  CHAR(10)
+
+--PRINT @SQL
+--SELECT * FROM dbo.SQL
+
 DECLARE @nofRows INT = 1
 DECLARE @LastLB INT = 0
 DECLARE @Com INT = 0 
 
-declare @q_nofrows varchar(4000) = (SELECT TXT from dbo.sql)
-print @q_nofrows
+SET @Com = (SELECT CHARINDEX('--', txt,@com) FROM dbo.SQL)
+PRINT @com
 
-select len(@q_nofrows) - len(replace(@q_nofrows, CHAR(10),''))
+SET @LastLB = (SELECT CHARINDEX(CHAR(10), txt, @LastLB) FROM dbo.SQL)
+print @lastLB
+WHILE @LastLB>=1
+BEGIN
+	INSERT INTO dbo.TableQeury VALUES (@nofrows, @Com,  @lastLB)
+    SET @nofRows=@nofRows+1
+    SET @LastLB= (SELECT CHARINDEX(CHAR(10) ,txt,  @LastLB+1) FROM dbo.SQL)
+    if (@Com > @LastLB+1)
+            BEGIN
+            SET @com = @LastLB+1
+            END
+    ELSE 
+                BEGIN
+                SET @Com = (SELECT CHARINDEX('--',txt, @LastLB) FROM dbo.SQL)
+                END
+END
+
+DROP TABLE IF EXISTS dbo.QueryByRow
+
+CREATE TABLE dbo.QueryByRow
+(ID INT IDENTITy(1,1)
+,Row_ID INT
+,Start_L INT
+,End_L INT
+,query_by_row VARCHAR(MAX)
+)
+
+INSERT INTO dbo.QueryByRow
+-- Rows Start and Rows End
+SELECT 
+t1.ID as Row_ID
+,ISNULL(t2.LB_position,0)+1 as Start_L
+,t1.LB_position AS END_L
+,SUBSTRING(@sql, ISNULL(t2.LB_position,0)+1, t1.LB_position  ) as query_by_row
+--,t1.Comm_positton
+FROM dbo.TableQeury AS t1
+left join dbo.TableQeury as t2
+ON t1.id = T2.id+1
+
+
+-- Get number of rows in Query
+DECLARE @q_nofrows VARCHAR(4000) = (SELECT TXT from dbo.sql)
+SELECT LEN(@q_nofrows) - LEN(REPLACE(@q_nofrows, CHAR(10),'')) -- nof_rows
+
+SELECT * FROM dbo.QueryByRow
