@@ -312,7 +312,7 @@ SELECT
 t1.ID as Row_ID
 ,ISNULL(t2.LB_position,0)+1 as Start_L
 ,t1.LB_position AS END_L
-,SUBSTRING(@sql, ISNULL(t2.LB_position,0)+1, t1.LB_position  ) as query_by_row
+,SUBSTRING(@sql, ISNULL(t2.LB_position,0), t1.LB_position-ISNULL(t2.LB_position,0)  ) as query_by_row
 --,t1.Comm_positton
 FROM dbo.TableQeury AS t1
 left join dbo.TableQeury as t2
