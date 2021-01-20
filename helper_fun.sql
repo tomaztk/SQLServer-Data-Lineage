@@ -324,3 +324,5 @@ DECLARE @q_nofrows VARCHAR(4000) = (SELECT TXT from dbo.sql)
 SELECT LEN(@q_nofrows) - LEN(REPLACE(@q_nofrows, CHAR(10),'')) -- nof_rows
 
 SELECT * FROM dbo.QueryByRow
+
+--- Adding  multiline/block comments out
