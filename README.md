@@ -1,5 +1,37 @@
 # SQLServer Data  Lineage for T-SQL Queries
 
-Data Lineage Transact SQL (T-SQL) for [Microsoft SQL Server](https://www.microsoft.com/en-us/sql-server).
+Data Lineage Transact SQL (T-SQL) for [Microsoft SQL Server](https://www.microsoft.com/en-us/sql-server) enables you to find the data origins and data destinations in your query. It gives you the visibility over query data columns and ability to track the changes over time.
 
-// work in progress 
+## Cloning the repository
+You can follow the steps below to clone the repository.
+```
+git clone -n https://github.com/tomaztk/SQLServer-Data-Lineage.git
+```
+
+
+## Quickstart
+
+1.  Clone the repository
+2.  Have your T-SQL query ready
+3.  Load the DataLineage table function with your query
+
+
+``` sql
+# Run
+DECLARE @t_sql_query NVARCHAR(MAX)
+SET @t_sql_query = N'-- Query
+SELECT top 10 
+ [name]
+,object_id
+--,principal_id
+--,schema_did
+,schema_id
+from sys.tables'
+
+
+SELECT dbo.fn_datalineage(@t_sql_query)
+```
+
+
+## Getting the results
+
