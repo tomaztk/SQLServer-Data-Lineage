@@ -1,3 +1,28 @@
+/*
+Author: Tomaz Kastrun
+Date: 2021
+URL: github.com/tomaztk
+Description:
+	T-SQL data lineage for queries, procedures and functions
+
+Usage:
+	DECLARE @t_sql_query NVARCHAR(MAX)
+		SET @t_sql_query = N'-- Query
+		SELECT top 10 
+		 [name]
+		,object_id
+		--,principal_id
+		--,schema_did
+		,schema_id
+		from sys.tables'
+
+SELECT dbo.fn_datalineage(@t_sql_query)
+
+ChangeLog:
+	- 
+
+*/
+
 USE QL;
 GO
 
@@ -12,7 +37,7 @@ DECLARE @sql VARCHAR(500) = '
 SELECT 
 s.Name
 ,s.Surname
-,d.DepartmentName
+,d.DepartmentName -- Comment there
 -- Comment here
 -- /*,d.DepartmentID*/
 /* This is a comment */ -- works
@@ -328,3 +353,20 @@ SELECT LEN(@q_nofrows) - LEN(REPLACE(@q_nofrows, CHAR(10),'')) -- nof_rows
 SELECT * FROM dbo.QueryByRow
 
 --- Adding  multiline/block comments out
+
+
+
+
+-- #### PRoceedure
+
+DROP TABLE IF EXISTS dbo.SQL_query
+CREATE TABLE dbo.SQL_query (
+     id INT IDENTITY(1,1) NOT NULL
+    ,query_txt NVARCHAR(4000)
+)
+
+insert into dbo.SQL_query
+exec sp_helptext  sql_text /* sp_proc1 /* procedure name */ */
+
+
+SELECT * FROM dbo.SQL_query
