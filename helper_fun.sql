@@ -1,6 +1,8 @@
 USE QL;
 GO
 
+
+
 DECLARE @sql VARCHAR(500) = '
 -- Query
 /* This is our Query */
