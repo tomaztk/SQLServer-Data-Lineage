@@ -8,8 +8,21 @@ You can follow the steps below to clone the repository.
 git clone -n https://github.com/tomaztk/SQLServer-Data-Lineage.git
 ```
 
+## Stripping comments from T-SQL Query
 
-## Quickstart
+Strip and remove all comments from your T-SQL query by using this procedure.
+
+
+``` sql
+# Run procedure dbo.remove_comments
+
+EXEC dbo.remove_comments
+   @procedure_name = N'sample_procedure'
+
+```
+
+
+## Quickstart for Data Lineage on T-SQL
 
 1.  Clone the repository
 2.  Have your T-SQL query ready
