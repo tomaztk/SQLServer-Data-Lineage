@@ -92,13 +92,13 @@ WHILE (@i <= @rowcount)
 	BEGIN
 		 IF SUBSTRING(@sp_text,@i,2) = '/*'
 			BEGIN
-				SELECT (SUBSTRING(@sp_text,@i,2)) -- Uncomment or Delete
+				-- SELECT (SUBSTRING(@sp_text,@i,2)) -- Uncomment or Delete
 				SELECT @comment_count = @comment_count + 1
 			END
 		 ELSE IF SUBSTRING(@sp_text,@i,2) = '*/'  
 			BEGIN
 				SELECT @comment_count = @comment_count - 1  
-				SELECT @comment_count -- Uncomment or Delete
+				-- SELECT @comment_count -- Uncomment or Delete
 			END
 		 ELSE IF @comment_count = 0
 			SELECT @sp_no_comment = @sp_no_comment + SUBSTRING(@sp_text,@i,1)
