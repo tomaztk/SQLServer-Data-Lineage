@@ -16,6 +16,7 @@ ChangeLog:
 
 */
 
+
 DROP PROCEDURE IF EXISTS dbo.sql_sample_procedure;
 GO
 
