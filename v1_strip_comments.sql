@@ -177,4 +177,8 @@ BEGIN
 	SET @Com = (SELECT CHARINDEX('--',txt, @LastLB) FROM dbo.SQL)
 END
 
+----------------
+-- Running code in ADS
+-- Running code in Azure SQL Server/Database
+----------------
 
