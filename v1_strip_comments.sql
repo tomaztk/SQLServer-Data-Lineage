@@ -180,5 +180,6 @@ END
 ----------------
 -- Running code in ADS
 -- Running code in Azure SQL Server/Database
+-- CR/LF does not break correctly
 ----------------
 
