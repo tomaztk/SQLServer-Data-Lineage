@@ -148,9 +148,7 @@ WHILE (LEN(@sp_no_comment) > 0)
 		SELECT @sp_no_comment = SUBSTRING(@sp_no_comment, CHARINDEX('\n',@sp_no_comment) + 2, LEN(@sp_no_comment))
 	END
 
-SELECT
-	*
-FROM #tbl_sp_no_comments
+SELECT * FROM #tbl_sp_no_comments
 
 
 ----------------
