@@ -181,3 +181,11 @@ END
 -- CR/LF does not break correctly
 ----------------
 
+DROP TABLE IF EXISTS  #tbl_sp_no_singleComm
+CREATE TABLE #tbl_sp_no_singleComm (rn int identity(1,1), sp_text_fin varchar(8000))
+
+DECLARE @nofRows INT =  (SELECT max(rn) FROM #tbl_sp_no_comments)
+DECLARE @posStart INT = 0
+DECLARE @posEnd INT = 0 
+
+
