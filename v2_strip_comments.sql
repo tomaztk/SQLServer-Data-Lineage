@@ -17,7 +17,7 @@ EXEC sp_helptext
 
 
 
-SELECT * FROM dbo.SQL_query_table
+--SELECT * FROM dbo.SQL_query_table
 
 
 DECLARE @sp_text varchar(8000) = ''
@@ -32,11 +32,11 @@ SELECT @sp_text = @sp_text + CASE
 								ELSE '' END + query_txt
 FROM dbo.SQL_query_table
 
-PRINT @sp_text
+--PRINT @sp_text
 
 DECLARE @i INT  = 1
 DECLARE @rowcount INT = (SELECT LEN(@sp_text))
-PRINT @rowcount
+--PRINT @rowcount
 
 WHILE (@i <= @rowcount) 
 	BEGIN
@@ -93,7 +93,7 @@ WHILE (LEN(@sp_no_comment) > 0)
 		SELECT @sp_no_comment = SUBSTRING(@sp_no_comment, CHARINDEX('\n',@sp_no_comment) + 2, LEN(@sp_no_comment))
 	END
 
-SELECT * FROM #tbl_sp_no_comments
+--SELECT * FROM #tbl_sp_no_comments
 
 
 DROP TABLE IF EXISTS  #tbl_sp_no_comments_fin
@@ -133,6 +133,8 @@ BEGIN
 
 END
 
-DROP TABLE IF EXISTS  #tbl_sp_no_comments
+--DROP TABLE IF EXISTS  #tbl_sp_no_comments
 
-SELECT * FROM #tbl_sp_no_comments_fin
+SELECT sp_text_fin  FROM #tbl_sp_no_comments_fin
+WHERE	
+	DATALENGTH(sp_text_fin) > 0 AND LEN(sp_text_fin) > 0
