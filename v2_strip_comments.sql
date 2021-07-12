@@ -1,5 +1,25 @@
 USE QL;
 
+
+--EXEC dbo.sql_sample_procedure 
+
+
+DROP TABLE IF EXISTS dbo.SQL_query_table;
+
+CREATE TABLE dbo.SQL_query_table (
+     id INT IDENTITY(1,1) NOT NULL
+    ,query_txt NVARCHAR(4000)
+)
+
+INSERT INTO dbo.SQL_query_table
+EXEC sp_helptext  
+	@objname = 'sql_sample_procedure'
+
+
+
+SELECT * FROM dbo.SQL_query_table
+
+
 DECLARE @sp_text varchar(8000) = ''
 DECLARE @sp_text_row varchar(8000)
 DECLARE @sp_no_comment varchar(8000) = ''
@@ -82,32 +102,37 @@ CREATE TABLE #tbl_sp_no_comments_fin (rn_orig int identity(1,1), rn INT, sp_text
 
 DECLARE @nofRows INT =  (SELECT COUNT(*) FROM #tbl_sp_no_comments)
 PRINT @nofRows
+DECLARE @ii INT = 1
 
-WHILE (@nofRows > 0)
+WHILE (@nofRows >= @ii)
 BEGIN
 
 	DECLARE @LastLB INT = 0
 	DECLARE @Com INT = 0 
-	SET @Com = (SELECT CHARINDEX('--', sp_text,@com) FROM #tbl_sp_no_comments WHERE rn = @nofRows)
+	SET @Com = (SELECT CHARINDEX('--', sp_text,@com) FROM #tbl_sp_no_comments WHERE rn = @ii)
 
-	SET @LastLB = (SELECT CHARINDEX(CHAR(10), sp_text, @LastLB) FROM #tbl_sp_no_comments WHERE rn = @nofRows)
+	SET @LastLB = (SELECT CHARINDEX(CHAR(10), sp_text, @LastLB) FROM #tbl_sp_no_comments WHERE rn = @ii)
 
 
 	
-	--INSERT INTO #tbl_sp_no_comments_fin VALUES (@nofRows,  )
+	INSERT INTO #tbl_sp_no_comments_fin (rn, sp_text_fin)
 
 	SELECT 
 		rn
-		,sp_text
-		,@Com AS StartCom
-		,@LastLB AS endCom
+		--,sp_text
+		--,@Com AS StartCom
+		--,@LastLB AS endCom
+		,CASE WHEN @Com = 0 THEN sp_text
+			  WHEN @Com <> 0 THEN SUBSTRING(sp_text, 0, @Com) END as new_sp_text
 	FROM #tbl_sp_no_comments
 	WHERE 
-		rn = @nofRows
+		rn = @ii
 
 
-	SET @nofRows = @nofRows - 1
+	SET @ii = @ii + 1
 
 END
 
+DROP TABLE IF EXISTS  #tbl_sp_no_comments
 
+SELECT * FROM #tbl_sp_no_comments_fin
