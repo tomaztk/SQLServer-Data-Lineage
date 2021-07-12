@@ -10,7 +10,7 @@ git clone -n https://github.com/tomaztk/SQLServer-Data-Lineage.git
 
 ## Stripping comments from T-SQL Query
 
-Strip and remove all comments from your T-SQL query by using this procedure.
+1. Strip and remove all comments from your T-SQL query by using this procedure.
 
 
 ``` sql
@@ -18,6 +18,22 @@ Strip and remove all comments from your T-SQL query by using this procedure.
 
 EXEC dbo.remove_comments
    @procedure_name = N'sample_procedure'
+
+```
+
+
+2. Strip and remove all comments from your T-SQL query by using variable.
+
+``` sql
+# Run procedure dbo.remove_comments_variable
+
+EXEC dbo.remove_comments_variable
+   @TSQL_Query = N'SELECT --*
+   TOP 10
+   *
+   FROM 
+   /* sample comment */
+   sys.tables'
 
 ```
 
