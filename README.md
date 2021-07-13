@@ -12,12 +12,14 @@ git clone -n https://github.com/tomaztk/SQLServer-Data-Lineage.git
 Clean your code of in-line and multiple lines of _--comments_ or _slash star_ comments from better visibility and greater readability.
 
 
-1. Run the helper_fun.sql
-Run helper_fun.sql helper file, that will create a sample data tables and example procedure.
+1. Run the support files
 
-1.  Stripping comments from T-SQL Query
+Run **helper_fun.sql** helper file, that will create a sample data tables and example procedure.
+In addition, run a **remove_comments.sql** file to create a procedure with stripping and removing  all the comments from your T-SQL query.
 
-Strip and remove all comments from your T-SQL query by using this procedure.
+1.  Removing comments from T-SQL Query
+
+Strip and remove all comments from your T-SQL query by using _dbo.remove_comments_ procedure.
 
 ``` sql
 # Run procedure dbo.remove_comments
