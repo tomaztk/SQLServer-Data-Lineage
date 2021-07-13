@@ -8,6 +8,10 @@ You can follow the steps below to clone the repository.
 git clone -n https://github.com/tomaztk/SQLServer-Data-Lineage.git
 ```
 
+## Run the helper_fun.sql
+
+Run helper_fun.sql helper file, that will create a sample data tables and example procedure.
+
 ## Stripping comments from T-SQL Query
 
 1. Strip and remove all comments from your T-SQL query by using this procedure.
@@ -17,7 +21,7 @@ git clone -n https://github.com/tomaztk/SQLServer-Data-Lineage.git
 # Run procedure dbo.remove_comments
 
 EXEC dbo.remove_comments
-   @procedure_name = N'sample_procedure'
+   @procedure_name = N'sql_sample_procedure'
 
 ```
 
