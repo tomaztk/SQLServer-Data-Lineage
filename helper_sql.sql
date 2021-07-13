@@ -40,3 +40,39 @@ INSERT INTO dbo.Students VALUES( 'Geoffrey', 'Wilson', '1977-01-21', 3)
 INSERT INTO dbo.Students VALUES( 'Mike', 'McCready', '1968-10-10', 4)
 INSERT INTO dbo.Students VALUES( 'John', 'Smith', '1975-01-01',4)
 INSERT INTO dbo.Students VALUES( 'Abigale', 'Wail', '1955-01-01',3)
+
+
+
+
+CREATE OR ALTER PROCEDURE [dbo].[sql_sample_procedure] 
+AS
+BEGIN
+		-- Query
+
+	    /********************* 
+		    This is our Query
+      With author, date and place
+		   *******************/
+
+		---- Adding some comments
+
+		SELECT 
+		s.Name
+		,s.Surname
+		-- ,s.Surname
+		,d.DepartmentName -- Comment there
+		-- Comment here
+		-- /*,d.DepartmentID*/
+		/* This is a comment */ -- works
+		---------------------
+		/* this is a inline comment
+		in two lines  */
+		/* /* this is a double comment */*/ -- works
+		,'test' AS test
+		/* /* comment */*/ --nope
+		FROM Students AS s
+		JOIN Departments AS D
+		ON d.DepartmentId = s.DepartmentId
+
+END;
+GO
