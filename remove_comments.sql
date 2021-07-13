@@ -1,10 +1,32 @@
 USE QL;
+GO
 
 
-CREATE PROCEDURE dbo.remove_comments
+CREATE OR ALTER PROCEDURE dbo.remove_comments
 
 /*
 
+Author: Tomaz Kastrun
+Date: July 2021
+
+GitHub: github.com/tomaztk
+Blogpost: wordpress.com/post/tomaztsql.wordpress.com/7232
+
+Description:
+	Removing all comments from your T-SQL Query for a given procedure
+	for better code visibility and readability
+
+
+
+Usage:
+	EXEC dbo.remove_comments
+		@procedure_name = N'sql_sample_procedure'
+
+
+Changelog:
+	-	
+
+ToDO:
 
 
 */
@@ -16,7 +38,6 @@ AS
 
 BEGIN
 
-
 DROP TABLE IF EXISTS dbo.SQL_query_table;
 
 CREATE TABLE dbo.SQL_query_table (
@@ -26,11 +47,8 @@ CREATE TABLE dbo.SQL_query_table (
 
 INSERT INTO dbo.SQL_query_table
 EXEC sp_helptext  
-	@objname = 'sql_sample_procedure'
+	@objname = @Procedure_name
 
-
-
---SELECT * FROM dbo.SQL_query_table
 
 
 DECLARE @sp_text varchar(8000) = ''
