@@ -17,7 +17,7 @@ Clean your code of in-line and multiple lines of _--comments_ or _slash star_ co
 Run **helper_fun.sql** helper file, that will create a sample data tables and example procedure.
 In addition, run a **remove_comments.sql** file to create a procedure with stripping and removing  all the comments from your T-SQL query.
 
-1.  Removing comments from T-SQL Query
+2. Removing comments from T-SQL Query
 
 Strip and remove all comments from your T-SQL query by using _dbo.remove_comments_ procedure.
 
