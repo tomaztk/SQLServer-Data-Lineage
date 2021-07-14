@@ -52,6 +52,7 @@ from sys.tables'
 SELECT dbo.fn_datalineage(@t_sql_query)
 ```
 
+## Follow and more on blog posts
 
-## Getting the results
+Remove comments from your T-SQL code ([Blog post](https://tomaztsql.wordpress.com/2021/07/13/remove-comments-from-your-t-sql-code/))
 
