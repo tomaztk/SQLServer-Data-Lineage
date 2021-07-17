@@ -11,6 +11,9 @@ git clone -n https://github.com/tomaztk/SQLServer-Data-Lineage.git
 # Removing comments from your code
 Clean your code of in-line and multiple lines of _--comments_ or _slash star_ comments from better visibility and greater readability.
 
+<a href="https://tomaztsql.files.wordpress.com/2021/07/2021-07-13-05_24_06-window.png"><img width="50%" src="https://tomaztsql.files.wordpress.com/2021/07/2021-07-13-05_24_06-window.png"/>
+</a>
+  
 
 1. Run the support files
 
@@ -28,6 +31,7 @@ EXEC dbo.remove_comments
    @procedure_name = N'sql_sample_procedure'
 
 ```
+
 
 # Quickstart for Data Lineage on T-SQL
 
