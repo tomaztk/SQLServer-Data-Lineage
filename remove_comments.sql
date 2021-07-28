@@ -52,9 +52,9 @@ EXEC sp_helptext
 
 
 
-DECLARE @proc_text varchar(8000) = ''
-DECLARE @proc_text_row varchar(8000)
-DECLARE @proc_no_comment varchar(8000) = ''
+DECLARE @proc_text varchar(MAX) = ''
+DECLARE @proc_text_row varchar(MAX)
+DECLARE @proc_no_comment varchar(MAX) = ''
 DECLARE @comment_count INT = 0
 
 
