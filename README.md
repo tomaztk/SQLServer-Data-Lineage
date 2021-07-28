@@ -5,7 +5,7 @@ Data Lineage Transact SQL (T-SQL) for [Microsoft SQL Server](https://www.microso
 ## Cloning the repository
 You can follow the steps below to clone the repository.
 ```
-git clone -n https://github.com/tomaztk/SQLServer-Data-Lineage.git
+git clone https://github.com/tomaztk/SQLServer-Data-Lineage.git
 ```
 
 # Removing comments from your code
