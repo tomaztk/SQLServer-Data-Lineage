@@ -3,11 +3,11 @@
 DECLARE @reserved_words TABLE (id int identity(1,1), word varchar(100))
 
 INSERT INTO @reserved_words (word)
-	     SELECT 'select' 
-union all select 'from' 
-union all select 'join' 
-union all select 'where' 
-union all select 'GROUP BY' 
+	     SELECT 'select ' 
+union all select 'from ' 
+union all select 'join ' 
+union all select 'where ' 
+union all select 'GROUP BY ' 
 
 
 DECLARE @sqlStatement AS VARCHAR(200)
@@ -67,6 +67,34 @@ DECLARE @lin_table TABLE (
 		,[table] VARCHAR(100)
 		)
 
+
+/***************************************************************************
+****************************************************************************/
 -- name of the tables / objects
 -- after from statement, if not followed by (
+-- or FROM ( select .. from)
 
+
+
+DECLARE @j INT = 1
+DECLARE @search_FROM AS VARCHAR(100)  
+SET @search_res_word = 'from '
+DECLARE @s_len int = DATALENGTH(@search_res_word)
+		
+WHILE @j < LEN(@sqlStatement)
+BEGIN
+
+	IF  (SUBSTRING(@sqlStatement,@j,@s_len) = @search_res_word)
+		BEGIN
+		
+		SELECT 
+			@search_res_word
+		   ,@j
+		   ,@s_len
+		   ,SUBSTRING(@sqlStatement, 
+		                 @j+@s_len, 
+						 charindex(' ', @Search_res_word)+@s_len+1
+						)
+		END
+	SET @j = @j + 1		
+END
