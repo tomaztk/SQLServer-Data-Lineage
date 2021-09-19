@@ -1,42 +1,58 @@
-DECLARE @String AS VARCHAR(200)
 
-DECLARE @search_words TABLE (id int identity(1,1), word varchar(100))
-INSERT INTO @search_words
-SELECT 'the' union all select 'from' union all select 'join' union all select 'where'
 
---select * from @search_words
+DECLARE @reserved_words TABLE (id int identity(1,1), word varchar(100))
 
-SET @String ='The sql server is the best from the universe where you join the best of the best'
+INSERT INTO @reserved_words (word)
+	     SELECT 'select' 
+union all select 'from' 
+union all select 'join' 
+union all select 'where' 
+union all select 'GROUP BY' 
 
-DECLARE @search_results TABLE (id int identity(1,1), word varchar(100), pos INT)
 
-declare @i int = 1
---declare @Result varchar(100) = ''
+DECLARE @sqlStatement AS VARCHAR(200)
+SET @sqlStatement ='
+SELECT top 10 
+ [name]
+,object_id
+,schema_id
+from sys.tables
+join (select * from sys.objects)
+'
+
+DECLARE @search_results TABLE (
+		 id int identity(1,1)
+		,word varchar(100)
+		,pos INT
+		,posEND INT)
+
+
 DECLARE @ii INT = 1
-DECLARE @nof_words INT = (Select COUNT (distinct word) from @search_results)
+DECLARE @nof_words INT  = (SELECT COUNT(DISTINCT word) FROM @reserved_words)
 
-select @nof_words
 
-while @ii <= @nof_words
+WHILE @ii <= @nof_words
 BEGIN
 	
-	   DECLARE @Search_String AS VARCHAR(100)
-	   set @Search_String = (SELECT word from @search_results where id=@ii)
+	  DECLARE @i INT = 1
+	  DECLARE @Search_String AS VARCHAR(100)  
+	  SET @Search_String = (SELECT word from @reserved_words where id=@ii)
+	  PRINT @search_string
+	  DECLARE @stringLen int = LEN(@Search_String)
 		
-		declare @stringLen int = LEN(@Search_String)
-		print @search_string
-		WHILE @i < LEN(@String)
+	  WHILE @i < LEN(@sqlStatement)
 		BEGIN
 
-		  if SUBSTRING(@String,@i,@stringLen) = @Search_String
-		   begin
-			insert into @search_results (word, pos)
-			select @Search_String, @i
-		   end
-		  SET @i = @i + 1
-		END
+		  IF  (SUBSTRING(@sqlStatement,@i,@stringLen) = @Search_String)
+		      BEGIN
+			   insert into @search_results (word, pos, posEND)
+			   select @Search_String, @i, @i+LEN(@Search_String)
+		      END
+		   SET @i = @i + 1		END
 
-		SET @ii = @ii + 1 
+
+	SET @ii = @ii + 1 
 END
+
 
 select * from @search_results
