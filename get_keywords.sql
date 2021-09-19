@@ -13,14 +13,22 @@ union all select 'GROUP BY '
 DECLARE @sqlStatement AS VARCHAR(200)
 SET @sqlStatement ='
 SELECT  
- [name]
-,object_id
-,schema_id
-FROM sys.tables AS t
-JOIN (select * from sys.objects where type = ''IT'') AS O
-ON t.object_id = o.object_Id
+ t.[name]
+,t.object_id
+,t.schema_id
+,( select
+    8 * SUM(a.used_pages) 
+FROM sys.indexes AS i
+    JOIN sys.partitions AS p ON p.OBJECT_ID = i.OBJECT_ID AND p.index_id = i.index_id
+    JOIN sys.allocation_units AS a ON a.container_id = p.partition_id
 WHERE
-	t.name like ''test%''
+    i.object_id = t.object_id) AS ''Indexsize(KB)''
+
+FROM sys.tables AS t
+JOIN ( select * from sys.columns) AS O
+ON t.object_id=o.object_Id
+WHERE
+	t.name like ''s%''
 '
 
 DECLARE @search_results TABLE (
