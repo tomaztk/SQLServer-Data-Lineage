@@ -86,9 +86,18 @@ DECLARE @lin_table TABLE (
 
 DECLARE @j INT = 1
 DECLARE @search_FROM AS VARCHAR(100)  
+DECLARE @reserved_words_tables TABLE (id int identity(1,1), word varchar(100))
+
+INSERT INTO @reserved_words_tables (word)
+	     SELECT 'from ' 
+union all select 'from (' 
+union all select 'join ' 
+
+
 SET @search_res_word = 'from '
 DECLARE @s_len int = DATALENGTH(@search_res_word)
 		
+
 WHILE @j < LEN(@sqlStatement)
 BEGIN
 
