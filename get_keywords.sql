@@ -83,35 +83,67 @@ DECLARE @lin_table TABLE (
 -- or FROM ( select .. from)
 
 
+DECLARE @sqlStatement2 AS VARCHAR(200)
+SET @sqlStatement2 ='
+SELECT  
+ t.[name]
+,t.object_id
+,t.schema_id
+,( select
+    8 * SUM(a.used_pages) 
+FROM sys.indexes AS i
+    JOIN sys.partitions AS p ON p.OBJECT_ID = i.OBJECT_ID AND p.index_id = i.index_id
+    JOIN sys.allocation_units AS a ON a.container_id = p.partition_id
+WHERE
+    i.object_id = t.object_id) AS ''Indexsize(KB)''
 
-DECLARE @j INT = 1
-DECLARE @search_FROM AS VARCHAR(100)  
+FROM sys.tables AS t
+JOIN ( select * from sys.columns) AS O
+ON t.object_id=o.object_Id
+WHERE
+	t.name like ''s%''
+'
+
+
 DECLARE @reserved_words_tables TABLE (id int identity(1,1), word varchar(100))
 
 INSERT INTO @reserved_words_tables (word)
 	     SELECT 'from ' 
 union all select 'from (' 
 union all select 'join ' 
+union all select ' join ' 
+
+DECLARE @jj INT = 1
+DECLARE @rwt INT = (SELECT COUNT(*) FROM @reserved_words_tables)
 
 
-SET @search_res_word = 'from '
-DECLARE @s_len int = DATALENGTH(@search_res_word)
-		
-
-WHILE @j < LEN(@sqlStatement)
+WHILE @jj <= @rwt
 BEGIN
+	
+		--SET @search_res_word = 'from '
+	
+		DECLARE @j INT = 1
+		DECLARE @search_res_word VARCHAR(100)
+	    SET @search_res_word  = (SELECT word from @reserved_words_tables where id=@jj)
+	    DECLARE @s_len int = DATALENGTH(@search_res_word)
 
-	IF  (SUBSTRING(@sqlStatement,@j,@s_len) = @search_res_word)
+		WHILE @j < LEN(@sqlStatement2)
 		BEGIN
+
+			IF  (SUBSTRING(@sqlStatement2,@j,@s_len) = @search_res_word)
+				BEGIN
 		
-		SELECT 
-			@search_res_word
-		   ,@j
-		   ,@s_len
-		   ,SUBSTRING(@sqlStatement, 
-		                 @j+@s_len, 
-						 charindex(' ', @Search_res_word)+@s_len+1
-						)
+				SELECT 
+					@search_res_word
+				   ,@j
+				   ,@s_len
+				   ,SUBSTRING(@sqlStatement2, 
+								 @j+@s_len, 
+								 charindex(' ', @Search_res_word)+@s_len+1
+								)
+				END
+			SET @j = @j + 1		
 		END
-	SET @j = @j + 1		
+		
+	 SET @jj = @jj + 1 
 END
