@@ -108,31 +108,36 @@ WHERE
 DECLARE @reserved_words_tables TABLE (id int identity(1,1), word varchar(100))
 
 INSERT INTO @reserved_words_tables (word)
-	     SELECT 'from ' 
-union all select 'from (' 
-union all select 'join ' 
-union all select ' join ' 
+--	     SELECT 'from ' 
+--union all select 'from (' 
+--union all select 'join ' 
+--union all select ' join ' 
+--union all select ' with ' 
+SELECT 'join '
+
 
 DECLARE @jj INT = 1
 DECLARE @rwt INT = (SELECT COUNT(*) FROM @reserved_words_tables)
 
+DECLARE @Results TABLE (SearchWord VARCHAR(100), j INT, s_len INT, reservedWord VARCHAR(100))
 
 WHILE @jj <= @rwt
 BEGIN
-	
-		--SET @search_res_word = 'from '
-	
+		
 		DECLARE @j INT = 1
 		DECLARE @search_res_word VARCHAR(100)
 	    SET @search_res_word  = (SELECT word from @reserved_words_tables where id=@jj)
 	    DECLARE @s_len int = DATALENGTH(@search_res_word)
+		print @search_res_word
 
 		WHILE @j < LEN(@sqlStatement2)
 		BEGIN
 
 			IF  (SUBSTRING(@sqlStatement2,@j,@s_len) = @search_res_word)
-				BEGIN
+			
 		
+				BEGIN
+				INSERT INTO @Results(SearchWord,j,s_len,reservedWord)
 				SELECT 
 					@search_res_word
 				   ,@j
@@ -142,8 +147,12 @@ BEGIN
 								 charindex(' ', @Search_res_word)+@s_len+1
 								)
 				END
-			SET @j = @j + 1		
+			
+			SET @j += 1		
 		END
 		
 	 SET @jj = @jj + 1 
+
 END
+
+	 SELECT * FROM @Results
