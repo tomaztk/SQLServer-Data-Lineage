@@ -1,3 +1,8 @@
+/***************************************************************************
+
+-- Searching for T-SQL reserved words
+
+****************************************************************************/
 
 
 DECLARE @reserved_words TABLE (id int identity(1,1), word varchar(100))
@@ -77,13 +82,15 @@ DECLARE @lin_table TABLE (
 
 
 /***************************************************************************
+
+-- Searching for T-SQL reserved words: FROM, JOIN, WITH 
+-- to create a list of tables
+
 ****************************************************************************/
--- name of the tables / objects
--- after from statement, if not followed by (
--- or FROM ( select .. from)
 
 
-DECLARE @sqlStatement2 AS VARCHAR(200)
+
+DECLARE @sqlStatement2 AS VARCHAR(2000)
 SET @sqlStatement2 ='
 SELECT  
  t.[name]
@@ -91,9 +98,9 @@ SELECT
 ,t.schema_id
 ,( select
     8 * SUM(a.used_pages) 
-FROM sys.indexes AS i
-    JOIN sys.partitions AS p ON p.OBJECT_ID = i.OBJECT_ID AND p.index_id = i.index_id
-    JOIN sys.allocation_units AS a ON a.container_id = p.partition_id
+FROM sys.indexes AS i 
+ JOIN sys.partitions AS p ON p.OBJECT_ID = i.OBJECT_ID AND p.index_id = i.index_id 
+ JOIN sys.allocation_units AS a ON a.container_id = p.partition_id
 WHERE
     i.object_id = t.object_id) AS ''Indexsize(KB)''
 
@@ -108,12 +115,9 @@ WHERE
 DECLARE @reserved_words_tables TABLE (id int identity(1,1), word varchar(100))
 
 INSERT INTO @reserved_words_tables (word)
---	     SELECT 'from ' 
---union all select 'from (' 
---union all select 'join ' 
---union all select ' join ' 
---union all select ' with ' 
-SELECT 'join '
+ 	     SELECT 'from ' 
+UNION ALL SELECT 'join ' 
+UNION ALL SELECT 'with ' 
 
 
 DECLARE @jj INT = 1
@@ -155,4 +159,6 @@ BEGIN
 
 END
 
-	 SELECT * FROM @Results
+SELECT * FROM @Results
+
+
