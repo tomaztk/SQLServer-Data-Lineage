@@ -112,6 +112,8 @@ WHERE
 '
 
 
+DECLARE @maxl INT = (SELECT DATALENGTH(@SqlStatement2))
+
 DECLARE @reserved_words_tables TABLE (id int identity(1,1), word varchar(100))
 
 INSERT INTO @reserved_words_tables (word)
@@ -142,20 +144,21 @@ BEGIN
 		
 				BEGIN
 				INSERT INTO @Results(SearchWord,j,s_len,reservedWord)
-				SELECT 
-					@search_res_word
-				   ,@j
-				   ,@s_len
-				   --,SUBSTRING(@sqlStatement2, 
-							--	 @j+@s_len, 
-							--	 charindex(' ', @Search_res_word)+@s_len+1
-							--	)
+ 
+					 SELECT 
+					 @search_res_word
+					  ,@j
+					  ,@s_len
+					 
+					  ,SUBSTRING(
+				       TRIM(SUBSTRING(@sqlStatement2, @j+@s_len, @maxl))
+						,1
+						,PATINDEX('% %', TRIM(SUBSTRING(@sqlStatement2, @j+@s_len, @maxl)))
+						) as tableName
 
-				,SUBSTRING(
-				TRIM(SUBSTRING(@sqlStatement2,CHARINDEX(@search_res_word,@sqlStatement2)+LEN(@search_res_word),LEN(@sqlStatement2)))
-				,1
-				,PATINDEX('% %', TRIM(SUBSTRING(@sqlStatement2,CHARINDEX(@search_res_word,@sqlStatement2)+LEN(@search_res_word),LEN(@sqlStatement2))) )
-				)
+
+
+
 				END
 			
 			SET @j += 1		
@@ -166,5 +169,7 @@ BEGIN
 END
 
 SELECT * FROM @Results
+
+
 
 
