@@ -125,7 +125,7 @@ UNION ALL SELECT 'with '
 DECLARE @jj INT = 1
 DECLARE @rwt INT = (SELECT COUNT(*) FROM @reserved_words_tables)
 
-DECLARE @Results TABLE (SearchWord VARCHAR(100), j INT, s_len INT, reservedWord VARCHAR(100))
+DECLARE @Results TABLE (SearchWord VARCHAR(100), j INT, s_len INT, SQLObject VARCHAR(100))
 
 WHILE @jj <= @rwt
 BEGIN
@@ -143,18 +143,18 @@ BEGIN
 			
 		
 				BEGIN
-				INSERT INTO @Results(SearchWord,j,s_len,reservedWord)
+				INSERT INTO @Results(SearchWord,j,s_len,SQLObject)
  
 					 SELECT 
 					 @search_res_word
 					  ,@j
 					  ,@s_len
 					 
-					  ,SUBSTRING(
+					  ,REPLACE(REPLACE(SUBSTRING(
 				       TRIM(SUBSTRING(@sqlStatement2, @j+@s_len, @maxl))
 						,1
-						,PATINDEX('% %', TRIM(SUBSTRING(@sqlStatement2, @j+@s_len, @maxl)))
-						) as tableName
+						,PATINDEX('% %', TRIM(SUBSTRING(@sqlStatement2, @j+@s_len, @maxl)))), ')',''),'(','')
+						 as tableName
 
 
 
@@ -169,6 +169,7 @@ BEGIN
 END
 
 SELECT * FROM @Results
+	WHERE	SQLObject IS NOT NULL AND SQLObject <> ''
 
 
 
