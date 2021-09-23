@@ -146,10 +146,16 @@ BEGIN
 					@search_res_word
 				   ,@j
 				   ,@s_len
-				   ,SUBSTRING(@sqlStatement2, 
-								 @j+@s_len, 
-								 charindex(' ', @Search_res_word)+@s_len+1
-								)
+				   --,SUBSTRING(@sqlStatement2, 
+							--	 @j+@s_len, 
+							--	 charindex(' ', @Search_res_word)+@s_len+1
+							--	)
+
+				,SUBSTRING(
+				TRIM(SUBSTRING(@sqlStatement2,CHARINDEX(@search_res_word,@sqlStatement2)+LEN(@search_res_word),LEN(@sqlStatement2)))
+				,1
+				,PATINDEX('% %', TRIM(SUBSTRING(@sqlStatement2,CHARINDEX(@search_res_word,@sqlStatement2)+LEN(@search_res_word),LEN(@sqlStatement2))) )
+				)
 				END
 			
 			SET @j += 1		
