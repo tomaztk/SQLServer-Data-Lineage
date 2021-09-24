@@ -105,7 +105,7 @@ WHERE
     i.object_id = t.object_id) AS ''Indexsize(KB)''
 
 FROM sys.tables AS t
-JOIN ( select * from sys.columns) AS O
+JOIN ( select * from sys.columns join dbo.tables on columns.object_id = tables.object_id) AS O
 ON t.object_id=o.object_Id
 WHERE
 	t.name like ''s%''
@@ -122,14 +122,15 @@ UNION ALL SELECT 'join '
 UNION ALL SELECT 'with ' 
 
 
+
 DECLARE @jj INT = 1
 DECLARE @rwt INT = (SELECT COUNT(*) FROM @reserved_words_tables)
 
-DECLARE @Results TABLE (SearchWord VARCHAR(100), j INT, s_len INT, SQLObject VARCHAR(100))
+DECLARE @Results TABLE (SearchWord VARCHAR(100), j INT, s_len INT, SQLObject VARCHAR(100), lvl INT)
 
 WHILE @jj <= @rwt
 BEGIN
-		
+		DECLARE @lvl INT = 0
 		DECLARE @j INT = 1
 		DECLARE @search_res_word VARCHAR(100)
 	    SET @search_res_word  = (SELECT word from @reserved_words_tables where id=@jj)
@@ -143,7 +144,7 @@ BEGIN
 			
 		
 				BEGIN
-				INSERT INTO @Results(SearchWord,j,s_len,SQLObject)
+				INSERT INTO @Results(SearchWord,j,s_len,SQLObject, lvl)
  
 					 SELECT 
 					 @search_res_word
@@ -155,7 +156,7 @@ BEGIN
 						,1
 						,PATINDEX('% %', TRIM(SUBSTRING(@sqlStatement2, @j+@s_len, @maxl)))), ')',''),'(','')
 						 as tableName
-
+						 ,@lvl
 
 
 
