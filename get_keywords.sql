@@ -158,8 +158,6 @@ BEGIN
 						 as tableName
 						 ,@lvl
 
-
-
 				END
 			
 			SET @j += 1		
