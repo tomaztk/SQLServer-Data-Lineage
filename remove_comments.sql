@@ -11,7 +11,7 @@ Author: Tomaz Kastrun
 Date: July 2021
 
 GitHub: github.com/tomaztk
-Blogpost: wordpress.com/post/tomaztsql.wordpress.com/7232
+Blogpost: https://tomaztsql.wordpress.com/2021/07/13/remove-comments-from-your-t-sql-code/
 
 Description:
 	Removing all comments from your T-SQL Query for a given procedure
