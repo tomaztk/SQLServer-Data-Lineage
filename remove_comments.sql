@@ -24,12 +24,6 @@ Usage:
 		@procedure_name = N'sql_sample_procedure'
 
 
-Changelog:
-	-	
-
-ToDO:
-
-
 */
 
 (
