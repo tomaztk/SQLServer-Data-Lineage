@@ -17,12 +17,9 @@ Description:
 	Removing all comments from your T-SQL Query for a given procedure
 	for better code visibility and readability
 
-
-
 Usage:
 	EXEC dbo.remove_comments
 		@procedure_name = N'sql_sample_procedure'
-
 
 */
 
