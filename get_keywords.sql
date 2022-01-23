@@ -120,7 +120,8 @@ INSERT INTO @reserved_words_tables (word)
  	     SELECT 'from ' 
 UNION ALL SELECT 'join ' 
 UNION ALL SELECT 'with ' 
-
+UNION ALL SELECT 'where '
+UNION ALL SELECT 'exists '
 
 
 DECLARE @jj INT = 1
