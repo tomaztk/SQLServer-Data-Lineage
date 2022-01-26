@@ -117,11 +117,11 @@ DECLARE @maxl INT = (SELECT DATALENGTH(@SqlStatement2))
 DECLARE @reserved_words_tables TABLE (id int identity(1,1), word varchar(100))
 
 INSERT INTO @reserved_words_tables (word)
- 	     SELECT 'from ' 
-UNION ALL SELECT 'join ' 
-UNION ALL SELECT 'with ' 
-UNION ALL SELECT 'where '
-UNION ALL SELECT 'exists '
+ 	     SELECT 'from' 
+UNION ALL SELECT 'join' 
+UNION ALL SELECT 'with' 
+UNION ALL SELECT 'where'
+UNION ALL SELECT 'exists'
 
 
 DECLARE @jj INT = 1
