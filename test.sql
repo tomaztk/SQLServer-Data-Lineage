@@ -1,7 +1,7 @@
-use [AdventureWorks2014];
+use AdventureWorks2014;
 
-DECLARE @sqlStatement3 AS VARCHAR(2000)
-SET @sqlStatement3 ='
+declare @stmt nvarchar(4000) = '
+
 SELECT 
     s.[BusinessEntityID]
     ,p.[Title]
@@ -14,6 +14,9 @@ SELECT
     ,s.[SalesQuota]
     ,s.[SalesYTD]
     ,s.[SalesLastYear]
+	,( SELECT GETDATE()) AS DateNow
+	,(select count(*)  FROM [AdventureWorks2014].sales.[SalesPerson]) as totalSales
+
 FROM [AdventureWorks2014].sales.[SalesPerson] s
     INNER JOIN [AdventureWorks2014].[HumanResources].[Employee] e 
     ON e.[BusinessEntityID] = s.[BusinessEntityID]
@@ -22,65 +25,51 @@ FROM [AdventureWorks2014].sales.[SalesPerson] s
 '
 
 
-DECLARE @maxl INT = (SELECT DATALENGTH(@sqlStatement3))
+-- exec sp_executesql @stmt
+
+
+/*
+query info
+*/
+
+declare @q_len int = DATALEngth(@stmt)
+declare @i int = 1
+
+declare @Results TABLE (SearchWord VARCHAR(100), i int, j int, sqlobject nvarchar(100))
+
+
+declare @res_words nvarchar(1000) = 'from,join,where,exists,with,apply,select'
 
 DECLARE @reserved_words_tables TABLE (id int identity(1,1), word varchar(100))
-
 INSERT INTO @reserved_words_tables (word)
- 	     SELECT 'from' 
-UNION ALL SELECT 'join' 
-UNION ALL SELECT 'with' 
-UNION ALL SELECT 'where'
-UNION ALL SELECT 'exists'
+SELECT [VALUE] FROM string_split(@res_words, ',')
 
 
-DECLARE @jj INT = 1
-DECLARE @rwt INT = (SELECT COUNT(*) FROM @reserved_words_tables)
 
-DECLARE @Results TABLE (SearchWord VARCHAR(100), j INT, s_len INT, SQLObject VARCHAR(100), lvl INT)
-
-WHILE @jj <= @rwt
-BEGIN
-		DECLARE @lvl INT = 0
-		DECLARE @j INT = 1
-		DECLARE @search_res_word VARCHAR(100)
-	    SET @search_res_word  = (SELECT word from @reserved_words_tables where id=@jj)
-	    DECLARE @s_len int = DATALENGTH(@search_res_word)
-		print @search_res_word
-
-		WHILE @j < LEN(@sqlStatement3)
-		BEGIN
-
-			IF  (SUBSTRING(@sqlStatement3,@j,@s_len) = @search_res_word)
-			
-		
-				BEGIN
-				INSERT INTO @Results(SearchWord,j,s_len,SQLObject, lvl)
- 
+while @i <= (select max(id) from @reserved_words_tables)
+begin
+	DECLARE @int_word nvarchar(100) = (select word from @reserved_words_tables where id = @i)
+	declare @ii int = 1
+	while @ii < @q_len
+	begin
+		if substring(@stmt,@ii,LEN(@int_word)) = @int_word
+		begin
 					 SELECT 
-					 @search_res_word
-					  ,@j
-					  ,@s_len
-					 
-					  ,REPLACE(REPLACE(SUBSTRING(
-				       TRIM(SUBSTRING(@sqlStatement3, @j+@s_len, @maxl))
-						,1
-						,PATINDEX('% %', TRIM(SUBSTRING(@sqlStatement3, @j+@s_len, @maxl)))), ')',''),'(','')
-						 as tableName
-						 ,@lvl
+					 @int_word
+					  ,@ii
+					  ,LEN(@int_word)
 
-				END
-			
-			SET @j += 1		
+					    ,REPLACE(REPLACE(SUBSTRING(
+				       TRIM(SUBSTRING(@stmt, @ii+LEN(@int_word), @q_len))
+						,1
+						,PATINDEX('% %', TRIM(SUBSTRING(@stmt, @ii+LEN(@int_word), @q_len)))), ')',''),'(','') as tableName
+			END
+			SET @ii += 1		
 		END
 		
-	 SET @jj = @jj + 1 
+	 SET @i = @i + 1 
 
 END
-
-SELECT * FROM @Results
-	WHERE	SQLObject IS NOT NULL AND SQLObject <> ''
-
 
 
 
