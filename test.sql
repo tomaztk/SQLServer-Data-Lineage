@@ -76,3 +76,4 @@ END
 
 select *from @result_table
 order by position asc
+-- last from that can be before join or select or exists
