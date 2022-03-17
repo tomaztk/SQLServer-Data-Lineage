@@ -44,6 +44,7 @@ DECLARE @reserved_words_tables TABLE (id int identity(1,1), word varchar(100))
 INSERT INTO @reserved_words_tables (word)
 SELECT [VALUE] FROM string_split(@res_words, ',')
 
+DECLARE @result_table TABLE (rword varchar(100), position int, rwordlen int, tableName varchar(1000))
 
 
 while @i <= (select max(id) from @reserved_words_tables)
@@ -54,6 +55,7 @@ begin
 	begin
 		if substring(@stmt,@ii,LEN(@int_word)) = @int_word
 		begin
+					INsert into  @result_table
 					 SELECT 
 					 @int_word
 					  ,@ii
@@ -72,4 +74,5 @@ begin
 END
 
 
-
+select *from @result_table
+order by position asc
