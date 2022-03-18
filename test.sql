@@ -25,6 +25,21 @@ FROM [AdventureWorks2014].sales.[SalesPerson] s
 '
 
 
+
+DECLARE @sqlStatement3 AS VARCHAR(2000)
+
+SET @sqlStatement3 ='SELECT
+ d1.name
+,d1.database_id
+,(select GETDATE()) as dd
+,X.compatibility_level 
+
+from sys.databases as d1
+join (select * from sys.databases) as x
+on x.name = d1.name'
+
+
+
 -- exec sp_executesql @stmt
 
 
