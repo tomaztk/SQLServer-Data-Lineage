@@ -133,3 +133,53 @@ END
 SELECT *
 FROM TK_TEST
 order by rn asc
+
+
+
+---- test
+DROP TABLE IF EXISTS TK_TEST2
+declare @st nvarchar(200) = '
+
+select a, b, c
+from dbo.tabela
+where a > b and c = 201;'
+
+
+select 
+TRIM(REPLACE(value, ' ','')) as val
+,row_number() over (ORDER BY (SELECT 1)) as rn
+INTO TK_TEST2
+from string_split(REPLACE(@st, CHAR(13), ' '), ' ' )
+WHERE
+    REPLACE(value, ' ','') <> ' ' 
+OR REPLACE(value, ' ','') <> ' '
+
+
+
+-- SELECT * FROM TK_TEST2
+
+DECLARE @i_row INT = 1
+DECLARE @max_row INT = (SELECT MAX(rn) FROM TK_TEST2)
+
+DECLARE @prev_word VARCHAR(1000), @int_word VARCHAR(1000)
+DEclare @row_commands nvarchar(1000) = 'select,delete,insert,drop,create,select,truncate,exec,execute'
+
+
+WHILE @max_row >= @i_row
+BEGIN
+    DECLARE @row VARCHAR(1000) = (SELECT val FROM TK_TEST2 WHERE rn = @i_row)
+    IF lower(@row) in (SELECT replace(trim(lower(value)), ' ','') from string_split(@row_commands, ','))
+         IF @row = 'select'
+         BEGIN
+            SET @int_word = 'SELECT'
+           SELECT @int_word
+           END
+        ELSE
+            SET @row = @prev_word
+        
+    ELSE
+    BEGIN
+        SELECT 'no'
+    END
+    SET @i_row = @i_row + 1
+END
