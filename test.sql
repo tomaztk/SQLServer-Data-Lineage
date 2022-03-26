@@ -176,6 +176,13 @@ BEGIN
            END
         ELSE
             SET @row = @prev_word
+            IF LOWER(@int_word) NOT IN (SELECT replace(trim(lower(value)), ' ','') from string_split(@row_commands, ','))
+            BEGIN
+                IF LOWER(@prev_word) = 'INTO'
+                SET @int_word = 'SELECT INTO'
+                    IF LOWER (@prev_word) NOT LIKE '%#%' OR LOWER(@prev_word)  NOT LIKE '%@%'
+                    SET @prev_word = ' ' + @prev_word + ' as ('
+            END
         
     ELSE
     BEGIN
