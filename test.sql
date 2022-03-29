@@ -182,6 +182,13 @@ BEGIN
                 SET @int_word = 'SELECT INTO'
                     IF LOWER (@prev_word) NOT LIKE '%#%' OR LOWER(@prev_word)  NOT LIKE '%@%'
                     SET @prev_word = ' ' + @prev_word + ' as ('
+		    IF @int NOT IN (SELECT replace(trim(lower(value)), ' ','') from string_split(@row_commands, ','))
+			     INSERT INTO @result
+			     SELECT 
+			     	@word, @int, @i_row
+				
+				SET @i_row += 1
+				SET @int = REPLACE(@int,  ' ', '')
             END
         
     ELSE
