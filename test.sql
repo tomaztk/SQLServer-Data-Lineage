@@ -140,8 +140,10 @@ order by rn asc
 DROP TABLE IF EXISTS TK_TEST2
 declare @st nvarchar(200) = '
 
+
 select a, b, c
-from dbo.tabela
+from dbo.tabela join dbo.tabla
+on tabela.a = tabla.b
 where a > b and c = 201;'
 
 
@@ -155,15 +157,69 @@ WHERE
 OR REPLACE(value, ' ','') <> ' '
 
 
+SELECT * FROM TK_TEST2
 
--- SELECT * FROM TK_TEST2
+
+
+DECLARE @table TABLE (tik varchar(100), tok varchar(100), order_ INT)
+DECLARE @token_i VARCHAR(100) = ''
+DECLARE @get_next BIT = 0 -- FALSE (1 = TRUE)
+DECLARE @previous VARCHAR(100) = ''
+DECLARE @order INT = 1
+DECLARE @previous_tik VARCHAR(100) = ''
+DECLARE @previous_get BIT = 0 -- FALSE
+
+DECLARE @ttok VARCHAR(100) = ''
+
 
 DECLARE @i_row INT = 1
 DECLARE @max_row INT = (SELECT MAX(rn) FROM TK_TEST2)
+DECLARE @row_commands_1 NVARCHAR(1000) = 'select,delete,insert,drop,create,select,truncate,exec,execute'
+DECLARE @row_commands_2 NVARCHAR(1000) = 'select,not,if,exists,select'
+DECLARE @row_commands_3 NVARCHAR(1000) = 'from,join,into,table,exists,sys.dm_exec_sql,exec,execute'
+
+WHILE (@max_row >= @i_row)
+BEGIN
+	--SELECT @i_row
+	DECLARE @token VARCHAR(1000) = (SELECT val FROM TK_TEST2 WHERE rn = @i_row)
+	-- SELECT @token
+		IF @token IN (SELECT REPLACE(TRIM(LOWER(value)), ' ','') FROM STRING_SPLIT(@row_commands_1, ','))
+			IF LOWER(@token) = 'select'
+				SET @token = 'select'
+			SET @token_i = @token
+		IF (@get_next = 1)
+			IF @token NOT IN (SELECT REPLACE(TRIM(LOWER(value)), ' ','') FROM STRING_SPLIT(@row_commands_2,','))
+				IF (LOWER(@previous) = 'into')
+					SET @token_i = 'select into'
+				IF (@token NOT LIKE '%#%' OR @token NOT LIKE '%#%')
+						
+						SET @ttok = ' ' + @token + ' as ('
+						IF (@ttok NOT IN (SELECT @token))
+							INSERT INTO @table (tik, tok, order_)
+							SELECT @token_i, @token, @order
+
+				SET @token_i = @token_i
+			SET @get_next = 0
+			IF @token = 'sys.dm_exec_sql_text'
+				SET @get_next = 1 
+
+			IF (@token IN (SELECT REPLACE(TRIM(LOWER(value)), ' ','') FROM STRING_SPLIT(@row_commands_3,',')))
+				SET @get_next = 1
+
+		SET @previous_tik  = @token_i
+		SET @previous = @token							
+
+	SET @i_row = @i_row + 1
+END
+
+SELECT * FROM @table
+
+
+/*
 
 DECLARE @prev_word VARCHAR(1000), @int_word VARCHAR(1000)
 DEclare @row_commands nvarchar(1000) = 'select,delete,insert,drop,create,select,truncate,exec,execute'
-
+declare @result table (wordd varchar(100), intt varchar(100), i_row varchar(100))
 
 WHILE @max_row >= @i_row
 BEGIN
@@ -182,6 +238,7 @@ BEGIN
                 SET @int_word = 'SELECT INTO'
                     IF LOWER (@prev_word) NOT LIKE '%#%' OR LOWER(@prev_word)  NOT LIKE '%@%'
                     SET @prev_word = ' ' + @prev_word + ' as ('
+
 		    IF @int NOT IN (SELECT replace(trim(lower(value)), ' ','') from string_split(@row_commands, ','))
 			     INSERT INTO @result
 			     SELECT 
@@ -197,3 +254,5 @@ BEGIN
     END
     SET @i_row = @i_row + 1
 END
+
+*/
