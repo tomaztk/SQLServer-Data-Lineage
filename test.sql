@@ -140,11 +140,13 @@ order by rn asc
 DROP TABLE IF EXISTS TK_TEST2
 declare @st nvarchar(200) = '
 
-
-select a, b, c
-from dbo.tabela join dbo.tabla
-on tabela.a = tabla.b
+select  a, b, c from  dbo.tabela join  dbo.tabla as ta 
+on tabela.a = tabla.b  
 where a > b and c = 201;'
+
+
+DECLARE @st2 NVARCHAR(200)
+SET @st2 = REPLACE(REPLACE(@st, CHAR(13), ''), CHAR(10), '')
 
 
 select 
@@ -159,7 +161,8 @@ OR REPLACE(value, ' ','') <> ' '
 
 SELECT * FROM TK_TEST2
 
-
+-- @token = @tokenen
+-- @token_i = @tokenen_i
 
 DECLARE @table TABLE (tik varchar(100), tok varchar(100), order_ INT)
 DECLARE @token_i VARCHAR(100) = ''
@@ -178,42 +181,54 @@ DECLARE @row_commands_1 NVARCHAR(1000) = 'select,delete,insert,drop,create,selec
 DECLARE @row_commands_2 NVARCHAR(1000) = 'select,not,if,exists,select'
 DECLARE @row_commands_3 NVARCHAR(1000) = 'from,join,into,table,exists,sys.dm_exec_sql,exec,execute'
 
+
+
 WHILE (@max_row >= @i_row)
 BEGIN
-	--SELECT @i_row
-	DECLARE @token VARCHAR(1000) = (SELECT val FROM TK_TEST2 WHERE rn = @i_row)
-	-- SELECT @token
-		IF @token IN (SELECT REPLACE(TRIM(LOWER(value)), ' ','') FROM STRING_SPLIT(@row_commands_1, ','))
-			IF LOWER(@token) = 'select'
-				SET @token = 'select'
-			SET @token_i = @token
-		IF (@get_next = 1)
-			IF @token NOT IN (SELECT REPLACE(TRIM(LOWER(value)), ' ','') FROM STRING_SPLIT(@row_commands_2,','))
-				IF (LOWER(@previous) = 'into')
-					SET @token_i = 'select into'
-				IF (@token NOT LIKE '%#%' OR @token NOT LIKE '%#%')
+		DECLARE @token VARCHAR(1000) = (SELECT val FROM TK_TEST2 WHERE rn = @i_row)
+
+			IF @token IN (SELECT REPLACE(TRIM(LOWER(value)), ' ','') FROM STRING_SPLIT(@row_commands_1, ','))
+			BEGIN
+				IF LOWER(@token) = 'select'
+					BEGIN
+						SET @token = 'select'
+					END
+				SET @token_i = @token
+			END
+			IF (@get_next = 1)
+			BEGIN
+					IF @token NOT IN (SELECT REPLACE(TRIM(LOWER(value)), ' ',' ') FROM STRING_SPLIT(@row_commands_2,','))
+					BEGIN
+						IF (LOWER(@previous) = 'into')
+							SET @token_i = 'select into'
+						IF (@token NOT LIKE '%#%' OR @token NOT LIKE '%#%')
 						
-						SET @ttok = ' ' + @token + ' as ('
-						IF (@ttok NOT IN (SELECT @token))
-							INSERT INTO @table (tik, tok, order_)
-							SELECT @token_i, @token, @order
+								SET @ttok = ' ' + @token + ' as ('
+								--IF (@ttok NOT IN (SELECT @token))
+								 IF (@ttok NOT IN (SELECT @st2))
+									INSERT INTO @table (tik, tok, order_)
+									SELECT @token_i, @token, @order
 
-				SET @token_i = @token_i
-			SET @get_next = 0
-			IF @token = 'sys.dm_exec_sql_text'
-				SET @get_next = 1 
-
+						SET @token_i = @token_i
+					END
+					SET @get_next = 0
+					IF @token = 'sys.dm_exec_sql_text'
+					BEGIN
+						SET @get_next = 1 
+					END
+			END
 			IF (@token IN (SELECT REPLACE(TRIM(LOWER(value)), ' ','') FROM STRING_SPLIT(@row_commands_3,',')))
+			BEGIN
 				SET @get_next = 1
+			END
 
-		SET @previous_tik  = @token_i
-		SET @previous = @token							
+			SET @previous_tik  = @token_i
+			SET @previous = @token							
 
-	SET @i_row = @i_row + 1
+			SET @i_row = @i_row + 1
 END
 
 SELECT * FROM @table
-
 
 /*
 
