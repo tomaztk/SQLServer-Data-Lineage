@@ -60,3 +60,10 @@ SELECT dbo.fn_datalineage(@t_sql_query)
 
 Remove comments from your T-SQL code ([Blog post](https://tomaztsql.wordpress.com/2021/07/13/remove-comments-from-your-t-sql-code/))
 
+## Contribute
+
+## Write mathematical formulas in Markdown using `$` prefix
+
+Write the following formula `$\sqrt{3x-1}+(1+x)^2$` and it will be rendered as:
+
+$\sqrt{3x-1}+(1+x)^2$
