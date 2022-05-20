@@ -60,7 +60,10 @@ SELECT dbo.fn_datalineage(@t_sql_query)
 
 Remove comments from your T-SQL code ([Blog post](https://tomaztsql.wordpress.com/2021/07/13/remove-comments-from-your-t-sql-code/))
 
-## Contribute
+
+## Collaboration and contributors
+Ideas, code collaboration or any other contributions of any kind is highly appreciated! 
+Fork the repository, add your code.
 
 ## Write mathematical formulas in Markdown using `$` prefix
 
