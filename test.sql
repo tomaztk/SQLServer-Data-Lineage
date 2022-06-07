@@ -271,3 +271,31 @@ BEGIN
 END
 
 */
+
+
+
+----
+
+CREATE OR ALTER FUNCTION dbo.fn_removelistChars
+/*
+Desc: Function for removing list of unwanted characters
+Created: 06.JUN.2022
+Author: TK
+Usage:
+	SELECT dbo.fn_removelistChars('Tol~99""''''j\e.j/e[,t&eks]t,ki')
+
+*/
+(
+	@txt AS VARCHAR(max)
+)
+RETURNS VARCHAR(MAX)
+AS
+BEGIN
+	DECLARE @list VARCHAR(200) = '%[^a-zA-Z0-9+@#\/%=_?!:.''-]%'
+    WHILE PATINDEX(@list,@txt) > 0
+		SET @txt = REPLACE(@txt,SUBSTRING(@txt,PATINDEX(@list,@txt),1),'')
+RETURN @txt
+
+END;
+GO   
+
