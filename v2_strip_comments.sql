@@ -1,4 +1,4 @@
-USE QL;
+USE Lineage;
 
 
 --EXEC dbo.sql_sample_procedure 
