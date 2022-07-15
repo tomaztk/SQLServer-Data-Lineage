@@ -25,6 +25,12 @@ END;
 GO   
 
 
+CREATE OR ALTER PROCEDURE dbo.sp_removeComments
+AS
+BEGIN
+-- comments
+END
+
 
 declare @stmt VARCHAR(8000) = '
 
