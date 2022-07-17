@@ -1,8 +1,7 @@
 USE Lineage;
-
+GO
 
 --EXEC dbo.sql_sample_procedure 
-
 
 DROP TABLE IF EXISTS dbo.SQL_query_table;
 
@@ -14,10 +13,6 @@ CREATE TABLE dbo.SQL_query_table (
 INSERT INTO dbo.SQL_query_table
 EXEC sp_helptext  
 	@objname = 'sql_sample_procedure'
-
-
-
---SELECT * FROM dbo.SQL_query_table
 
 
 DECLARE @sp_text varchar(8000) = ''
@@ -32,11 +27,9 @@ SELECT @sp_text = @sp_text + CASE
 								ELSE '' END + query_txt
 FROM dbo.SQL_query_table
 
---PRINT @sp_text
 
 DECLARE @i INT  = 1
 DECLARE @rowcount INT = (SELECT LEN(@sp_text))
---PRINT @rowcount
 
 WHILE (@i <= @rowcount) 
 	BEGIN
