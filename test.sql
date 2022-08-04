@@ -163,5 +163,5 @@ BEGIN
 END
 
 -- Final results
-SELECT * FROM @table
+SELECT *, row_number() over (order by (select 1)) as rn FROM @table
 
