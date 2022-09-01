@@ -1,6 +1,7 @@
 USE Lineage;
 GO
 
+
 CREATE OR ALTER FUNCTION dbo.fn_removelistChars
 /*
 Desc: Function for removing list of unwanted characters
@@ -29,7 +30,8 @@ CREATE OR ALTER PROCEDURE dbo.sp_removeComments
 AS
 BEGIN
 -- comments
-END
+END;
+GO
 
 
 declare @stmt VARCHAR(8000) = '
@@ -164,4 +166,8 @@ END
 
 -- Final results
 SELECT *, row_number() over (order by (select 1)) as rn FROM @table
+
+
+
+
 
