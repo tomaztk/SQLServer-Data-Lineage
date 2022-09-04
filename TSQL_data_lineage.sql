@@ -66,7 +66,6 @@ BEGIN
 ******************************** */
 
 
-
 DROP TABLE IF EXISTS dbo.SQL_query_table
 
 CREATE TABLE dbo.SQL_query_table (
@@ -204,10 +203,12 @@ CREATE TABLE dbo.SQL_query_table (
 
     END
 
+    DROP TABLE IF EXISTS  dbo.TK_res
 
     SELECT 
         rn
         ,sp_text_fin  
+    INTO dbo.TK_res
     FROM #tbl_sp_no_comments_fin
     WHERE	
         DATALENGTH(sp_text_fin) > 0 
@@ -225,46 +226,17 @@ CREATE TABLE dbo.SQL_query_table (
 DROP TABLE IF EXISTS TK_TEST2
 
 
-DECLARE @stmt NVARCHAR(MAX) = (
-
-    SELECT 
-        sp_text_fin  
-    FROM #tbl_sp_no_comments_fin
-    WHERE	
-        DATALENGTH(sp_text_fin) > 0 
-    AND LEN(sp_text_fin) > 0
-)
-
-DECLARE @stmt2 NVARCHAR(4000) 
-SET @stmt2 = REPLACE(REPLACE(@stmt, CHAR(13), ' '), CHAR(10), ' ')
-
-
 select 
-TRIM(REPLACE(value, ' ','')) as val
-,dbo.fn_removelistChars(value) as val_f
+TRIM(REPLACE(sp_text_fin, ' ','')) as val
+,dbo.fn_removelistChars(sp_text_fin) as val_f
 ,row_number() over (ORDER BY (SELECT 1)) as rn
 INTO TK_TEST2
-from string_split(REPLACE(@stmt2, CHAR(13), ' '), ' ' )
-WHERE
-    REPLACE(value, ' ','') <> ' ' 
-OR REPLACE(value, ' ','') <> ' '
+from  TK_RES  
+where sp_text_fin <> ' '
 
 
 
-
-SELECT 
-*
-,case when val like '%(%' then 1 else 0 end as predok
-,case when val like '%)%' then 1 else 0 end as zak
-,case when val like '%select%' then 1 else 0 end as select_
-,case when val like '%FROM%' then 1 else 0 end as from_
-,case when val like '%join%' then 1 else 0 end as join_
-,case when val like '%where%' then 1 else 0 end as where_
-FROM TK_TEST2
-
-
-
-
+DROP TABLE IF EXISTS dbo.TK_RES
 
 
 -- @token = @tokenen
@@ -311,7 +283,8 @@ BEGIN
 						
 								SET @ttok = ' ' + @token + ' as ('
 								--IF (@ttok NOT IN (SELECT @token))
-								 IF (@ttok NOT IN (SELECT @stmt2))
+								-- IF (@ttok NOT IN (SELECT @stmt2))
+                                  IF (@ttok NOT IN (SELECT @InputQuery))
 									INSERT INTO @table (tik, tok, order_)
 									SELECT @token_i, @token, @order
 
@@ -334,11 +307,15 @@ BEGIN
 			SET @i_row = @i_row + 1
 END
 
+DROP TABLE IF EXISTS dbo.fin_res
 -- Final results
-SELECT *, row_number() over (order by (select 1)) as rn FROM @table
+SELECT *
+,row_number() over (order by (select 1)) as rn 
+INTO dbo.fin_res
+FROM @table
 
 
-
+SELECT * FROM dbo.fin_res
 
 
 
