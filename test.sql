@@ -31,7 +31,6 @@ AS
 BEGIN
 -- comments
 END;
-GO
 
 
 declare @stmt VARCHAR(8000) = '
