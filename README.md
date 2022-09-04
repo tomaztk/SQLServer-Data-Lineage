@@ -1,6 +1,6 @@
-# Data Lineage for Microsoft SQL Server T-SQL Queries
+# Data Lineage for Microsoft T-SQL Queries 
 
-Data Lineage Transact SQL (T-SQL) for [Microsoft SQL Server](https://www.microsoft.com/en-us/sql-server) enables you to find the data origins and data destinations in your query. It gives you the visibility over query data columns and ability to track the changes over time.
+Data Lineage Transact SQL (T-SQL) for [Microsoft SQL Server](https://www.microsoft.com/en-us/sql-server) or [Azure SQL Server](https://azure.microsoft.com/en-us/services/sql-database/campaign/) enables you to find the data origins and data destinations in your query. It gives you the visibility over query data columns and ability to track the changes over time.
 
 
 # Features
@@ -37,22 +37,29 @@ Run **TSQL_data_lineage.sql**  file to create  a lineage procedure. This script 
 
 ```sql
 -- Get your query:
-declare @test_query VARCHAR(8000) = '
+DECLARE @test_query VARCHAR(MAX) = '
 
+-- This is a sample query to test data lineage
 SELECT 
     s.[BusinessEntityID]
     ,p.[Title]
     ,p.[FirstName]
     ,p.[MiddleName]
-    ,p.[LastName]
+   -- ,p.[LastName]
     ,p.[Suffix]
-    ,e.[JobTitle] as imeSluzbe
+    ,e.[JobTitle] as JobName
     ,p.[EmailPromotion]
     ,s.[SalesQuota]
     ,s.[SalesYTD]
     ,s.[SalesLastYear]
 	,( SELECT GETDATE() ) AS DateNow
 	,( select count(*)  FROM [AdventureWorks2014].sales.[SalesPerson] ) as totalSales
+
+/*
+
+Adding some comments!
+
+*/
 
 FROM [AdventureWorks2014].sales.[SalesPerson] s
     LEFT JOIN [AdventureWorks2014].[HumanResources].[Employee] e 

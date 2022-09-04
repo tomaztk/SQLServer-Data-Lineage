@@ -223,20 +223,33 @@ CREATE TABLE dbo.SQL_query_table (
 ******************************** */
 
 
+
+DECLARE @orig_q VARCHAR(MAX) 
+SELECT @orig_q = COALESCE(@orig_q + ', ', '') + sp_text_fin
+FROM dbo.TK_RES
+order by rn asc
+
 DROP TABLE IF EXISTS TK_TEST2
 
 
+DECLARE @stmt2 NVARCHAR(MAX)
+SET @stmt2 = REPLACE(REPLACE(@orig_q, CHAR(13), ' '), CHAR(10), ' ')
+
+
 select 
-TRIM(REPLACE(sp_text_fin, ' ','')) as val
-,dbo.fn_removelistChars(sp_text_fin) as val_f
+TRIM(REPLACE(value, ' ','')) as val
+,dbo.fn_removelistChars(value) as val_f
 ,row_number() over (ORDER BY (SELECT 1)) as rn
 INTO TK_TEST2
-from  TK_RES  
-where sp_text_fin <> ' '
+from string_split(REPLACE(@stmt2, CHAR(13), ' '), ' ' )
+WHERE
+    REPLACE(value, ' ','') <> ' ' 
+OR REPLACE(value, ' ','') <> ' '
 
 
 
-DROP TABLE IF EXISTS dbo.TK_RES
+
+-- DROP TABLE IF EXISTS dbo.TK_RES
 
 
 -- @token = @tokenen
@@ -283,8 +296,7 @@ BEGIN
 						
 								SET @ttok = ' ' + @token + ' as ('
 								--IF (@ttok NOT IN (SELECT @token))
-								-- IF (@ttok NOT IN (SELECT @stmt2))
-                                  IF (@ttok NOT IN (SELECT @InputQuery))
+								 IF (@ttok NOT IN (SELECT @stmt2))
 									INSERT INTO @table (tik, tok, order_)
 									SELECT @token_i, @token, @order
 
@@ -315,8 +327,10 @@ INTO dbo.fin_res
 FROM @table
 
 
-SELECT * FROM dbo.fin_res
-
+SELECT tik AS Clause_name
+,tok AS Object_Name
+,rn AS order_DL
+ FROM dbo.fin_res
 
 
 -- END of procedure
@@ -326,25 +340,35 @@ GO
 
 
 
+/* **************************
+*
+* -- TEST functionalities
+*
+************************* */
 
--- TEST
+DECLARE @test_query VARCHAR(MAX) = '
 
-declare @test_query VARCHAR(8000) = '
-
+-- This is a sample query to test data lineage
 SELECT 
     s.[BusinessEntityID]
     ,p.[Title]
     ,p.[FirstName]
     ,p.[MiddleName]
-    ,p.[LastName]
+   -- ,p.[LastName]
     ,p.[Suffix]
-    ,e.[JobTitle] as imeSluzbe
+    ,e.[JobTitle] as JobName
     ,p.[EmailPromotion]
     ,s.[SalesQuota]
     ,s.[SalesYTD]
     ,s.[SalesLastYear]
 	,( SELECT GETDATE() ) AS DateNow
 	,( select count(*)  FROM [AdventureWorks2014].sales.[SalesPerson] ) as totalSales
+
+/*
+
+Adding some comments!
+
+*/
 
 FROM [AdventureWorks2014].sales.[SalesPerson] s
     LEFT JOIN [AdventureWorks2014].[HumanResources].[Employee] e 
@@ -357,3 +381,4 @@ FROM [AdventureWorks2014].sales.[SalesPerson] s
 
 EXEC dbo.TSQL_data_lineage 
   @InputQuery = @test_query
+
