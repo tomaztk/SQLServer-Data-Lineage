@@ -203,17 +203,16 @@ CREATE TABLE dbo.SQL_query_table (
 
     END
 
-    DROP TABLE IF EXISTS  dbo.TK_res
+DROP TABLE IF EXISTS  dbo.TK_results_no_comment
 
-    SELECT 
-        rn
-        ,sp_text_fin  
-    INTO dbo.TK_res
-    FROM #tbl_sp_no_comments_fin
-    WHERE	
-        DATALENGTH(sp_text_fin) > 0 
-    AND LEN(sp_text_fin) > 0
-
+SELECT 
+    rn
+    ,sp_text_fin  
+INTO dbo.TK_results_no_comment
+FROM #tbl_sp_no_comments_fin
+WHERE	
+    DATALENGTH(sp_text_fin) > 0 
+AND LEN(sp_text_fin) > 0
 
 
 /* ******************************
@@ -226,7 +225,7 @@ CREATE TABLE dbo.SQL_query_table (
 
 DECLARE @orig_q VARCHAR(MAX) 
 SELECT @orig_q = COALESCE(@orig_q + ', ', '') + sp_text_fin
-FROM dbo.TK_RES
+FROM dbo.TK_results_no_comment
 order by rn asc
 
 DROP TABLE IF EXISTS dbo.LN_Query
@@ -236,10 +235,10 @@ DECLARE @stmt2 NVARCHAR(MAX)
 SET @stmt2 = REPLACE(REPLACE(@orig_q, CHAR(13), ' '), CHAR(10), ' ')
 
 
-select 
-TRIM(REPLACE(value, ' ','')) as val
-,dbo.fn_removelistChars(value) as val_f
-,row_number() over (ORDER BY (SELECT 1)) as rn
+SELECT 
+     TRIM(REPLACE(value, ' ','')) as val
+    ,dbo.fn_removelistChars(value) as val_f
+    ,row_number() over (ORDER BY (SELECT 1)) as rn
 INTO dbo.LN_Query
 from string_split(REPLACE(@stmt2, CHAR(13), ' '), ' ' )
 WHERE
@@ -247,9 +246,6 @@ WHERE
 OR REPLACE(value, ' ','') <> ' '
 
 
-
-
--- DROP TABLE IF EXISTS dbo.TK_RES
 
 
 -- @token = @tokenen
@@ -295,7 +291,6 @@ BEGIN
 						IF (@token NOT LIKE '%#%' OR @token NOT LIKE '%#%')
 						
 								SET @ttok = ' ' + @token + ' as ('
-								--IF (@ttok NOT IN (SELECT @token))
 								 IF (@ttok NOT IN (SELECT @stmt2))
 									INSERT INTO @table (tik, tok, order_)
 									SELECT @token_i, @token, @order
@@ -319,6 +314,7 @@ BEGIN
 			SET @i_row = @i_row + 1
 END
 
+
 DROP TABLE IF EXISTS dbo.final_result
 -- Final results
 SELECT *
@@ -334,7 +330,6 @@ SELECT
  FROM dbo.final_result
 
 
--- END of procedure
 END;
 GO
 
