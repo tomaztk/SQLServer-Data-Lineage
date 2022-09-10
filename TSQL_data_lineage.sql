@@ -229,7 +229,7 @@ SELECT @orig_q = COALESCE(@orig_q + ', ', '') + sp_text_fin
 FROM dbo.TK_RES
 order by rn asc
 
-DROP TABLE IF EXISTS TK_TEST2
+DROP TABLE IF EXISTS dbo.LN_Query
 
 
 DECLARE @stmt2 NVARCHAR(MAX)
@@ -240,7 +240,7 @@ select
 TRIM(REPLACE(value, ' ','')) as val
 ,dbo.fn_removelistChars(value) as val_f
 ,row_number() over (ORDER BY (SELECT 1)) as rn
-INTO TK_TEST2
+INTO dbo.LN_Query
 from string_split(REPLACE(@stmt2, CHAR(13), ' '), ' ' )
 WHERE
     REPLACE(value, ' ','') <> ' ' 
@@ -267,7 +267,7 @@ DECLARE @ttok VARCHAR(100) = ''
 
 
 DECLARE @i_row INT = 1
-DECLARE @max_row INT = (SELECT MAX(rn) FROM TK_TEST2)
+DECLARE @max_row INT = (SELECT MAX(rn) FROM dbo.LN_Query)
 DECLARE @row_commands_1 NVARCHAR(1000) = 'select,delete,insert,drop,create,select,truncate,exec,execute'
 DECLARE @row_commands_2 NVARCHAR(1000) = 'select,not,if,exists,select'
 DECLARE @row_commands_3 NVARCHAR(1000) = 'from,join,into,table,exists,sys.dm_exec_sql,exec,execute'
@@ -276,7 +276,7 @@ DECLARE @row_commands_3 NVARCHAR(1000) = 'from,join,into,table,exists,sys.dm_exe
 
 WHILE (@max_row >= @i_row)
 BEGIN
-		DECLARE @token VARCHAR(1000) = (SELECT val FROM TK_TEST2 WHERE rn = @i_row)
+		DECLARE @token VARCHAR(1000) = (SELECT val FROM dbo.LN_Query WHERE rn = @i_row)
 
 			IF @token IN (SELECT REPLACE(TRIM(LOWER(value)), ' ','') FROM STRING_SPLIT(@row_commands_1, ','))
 			BEGIN
@@ -319,18 +319,19 @@ BEGIN
 			SET @i_row = @i_row + 1
 END
 
-DROP TABLE IF EXISTS dbo.fin_res
+DROP TABLE IF EXISTS dbo.final_result
 -- Final results
 SELECT *
 ,row_number() over (order by (select 1)) as rn 
-INTO dbo.fin_res
+INTO dbo.final_result
 FROM @table
 
 
-SELECT tik AS Clause_name
-,tok AS Object_Name
-,rn AS order_DL
- FROM dbo.fin_res
+SELECT 
+  tik AS Clause_name
+ ,tok AS Object_Name
+ ,rn AS order_DL
+ FROM dbo.final_result
 
 
 -- END of procedure
