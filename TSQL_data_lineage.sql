@@ -247,10 +247,6 @@ OR REPLACE(value, ' ','') <> ' '
 
 
 
-
--- @token = @tokenen
--- @token_i = @tokenen_i
-
 DECLARE @table TABLE (tik varchar(100), tok varchar(100), order_ INT)
 DECLARE @token_i VARCHAR(100) = ''
 DECLARE @get_next BIT = 0 -- FALSE (1 = TRUE)
@@ -267,7 +263,6 @@ DECLARE @max_row INT = (SELECT MAX(rn) FROM dbo.LN_Query)
 DECLARE @row_commands_1 NVARCHAR(1000) = 'select,delete,insert,drop,create,select,truncate,exec,execute'
 DECLARE @row_commands_2 NVARCHAR(1000) = 'select,not,if,exists,select'
 DECLARE @row_commands_3 NVARCHAR(1000) = 'from,join,into,table,exists,sys.dm_exec_sql,exec,execute'
-
 
 
 WHILE (@max_row >= @i_row)
