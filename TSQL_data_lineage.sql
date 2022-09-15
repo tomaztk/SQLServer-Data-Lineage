@@ -203,12 +203,12 @@ CREATE TABLE dbo.SQL_query_table (
 
     END
 
-DROP TABLE IF EXISTS  dbo.TK_results_no_comment
+DROP TABLE IF EXISTS  dbo.Query_results_no_comment
 
 SELECT 
     rn
     ,sp_text_fin  
-INTO dbo.TK_results_no_comment
+INTO dbo.Query_results_no_comment
 FROM #tbl_sp_no_comments_fin
 WHERE	
     DATALENGTH(sp_text_fin) > 0 
@@ -225,7 +225,7 @@ AND LEN(sp_text_fin) > 0
 
 DECLARE @orig_q VARCHAR(MAX) 
 SELECT @orig_q = COALESCE(@orig_q + ', ', '') + sp_text_fin
-FROM dbo.TK_results_no_comment
+FROM dbo.Query_results_no_comment
 order by rn asc
 
 DROP TABLE IF EXISTS dbo.LN_Query
@@ -247,68 +247,69 @@ OR REPLACE(value, ' ','') <> ' '
 
 
 
-DECLARE @table TABLE (tik varchar(100), tok varchar(100), order_ INT)
-DECLARE @token_i VARCHAR(100) = ''
-DECLARE @get_next BIT = 0 -- FALSE (1 = TRUE)
-DECLARE @previous VARCHAR(100) = ''
+DECLARE @table TABLE (command_ VARCHAR(200), location_ VARCHAR(200), order_ INT)
+DECLARE @command_i VARCHAR(200) = ''
+DECLARE @next_step BIT = 0 -- FALSE (1 = TRUE)
+DECLARE @previous VARCHAR(200) = ''
 DECLARE @order INT = 1
-DECLARE @previous_tik VARCHAR(100) = ''
-DECLARE @previous_get BIT = 0 -- FALSE
+DECLARE @previous_cmd VARCHAR(200) = ''
+DECLARE @previous_step BIT = 0 -- FALSE
 
 DECLARE @ttok VARCHAR(100) = ''
 
 
 DECLARE @i_row INT = 1
 DECLARE @max_row INT = (SELECT MAX(rn) FROM dbo.LN_Query)
+
 DECLARE @row_commands_1 NVARCHAR(1000) = 'select,delete,insert,drop,create,select,truncate,exec,execute'
 DECLARE @row_commands_2 NVARCHAR(1000) = 'select,not,if,exists,select'
-DECLARE @row_commands_3 NVARCHAR(1000) = 'from,join,into,table,exists,sys.dm_exec_sql,exec,execute'
+DECLARE @row_commands_3 NVARCHAR(1000) = 'from,join,into,table,exists,sys.dm_exec_sql_text,sys.dm_exec_cursors,exec,execute'
 
 
 WHILE (@max_row >= @i_row)
 BEGIN
-		DECLARE @token VARCHAR(1000) = (SELECT val FROM dbo.LN_Query WHERE rn = @i_row)
+		DECLARE @command VARCHAR(1000) = (SELECT val FROM dbo.LN_Query WHERE rn = @i_row)
 
-			IF @token IN (SELECT REPLACE(TRIM(LOWER(value)), ' ','') FROM STRING_SPLIT(@row_commands_1, ','))
+			IF @command IN (SELECT REPLACE(TRIM(LOWER(value)), ' ','') FROM STRING_SPLIT(@row_commands_1, ','))
 			BEGIN
-				IF LOWER(@token) = 'select'
+				IF LOWER(@command) = 'select'
 					BEGIN
-						SET @token = 'select'
+						SET @command = 'select'
 					END
-				SET @token_i = @token
+				SET @command_i = @command
 			END
-			IF (@get_next = 1)
+			IF (@next_step = 1)
 			BEGIN
-					IF @token NOT IN (SELECT REPLACE(TRIM(LOWER(value)), ' ',' ') FROM STRING_SPLIT(@row_commands_2,','))
+					IF @command NOT IN (SELECT REPLACE(TRIM(LOWER(value)), ' ',' ') FROM STRING_SPLIT(@row_commands_2,','))
 					BEGIN
 						IF (LOWER(@previous) = 'into')
-							SET @token_i = 'select into'
-						IF (@token NOT LIKE '%#%' OR @token NOT LIKE '%#%')
+							SET @command_i = 'select into'
+						IF (@command NOT LIKE '%#%' OR @command NOT LIKE '%#%')
 						
-								SET @ttok = ' ' + @token + ' as ('
+								SET @ttok = ' ' + @command + ' as ('
 								 IF (@ttok NOT IN (SELECT @stmt2))
-									INSERT INTO @table (tik, tok, order_)
-									SELECT @token_i, @token, @order
+									INSERT INTO @table (command_, location_, order_)
+									SELECT 
+										 @command_i
+										,@command
+										,@order
 
-						SET @token_i = @token_i
+						SET @command_i = @command_i
 					END
-					SET @get_next = 0
-					IF @token = 'sys.dm_exec_sql_text'
-					BEGIN
-						SET @get_next = 1 
-					END
+					SET @next_step = 0
+					IF @command  IN ('sys.dm_exec_sql_text','sys.dm_exec_cursors')
+					BEGIN SET @next_step = 1  END
 			END
-			IF (@token IN (SELECT REPLACE(TRIM(LOWER(value)), ' ','') FROM STRING_SPLIT(@row_commands_3,',')))
+			IF (@command IN (SELECT REPLACE(TRIM(LOWER(value)), ' ','') FROM STRING_SPLIT(@row_commands_3,',')))
 			BEGIN
-				SET @get_next = 1
+				SET @next_step = 1
 			END
 
-			SET @previous_tik  = @token_i
-			SET @previous = @token							
+			SET @previous_cmd  = @command_i
+			SET @previous = @command							
 
 			SET @i_row = @i_row + 1
 END
-
 
 DROP TABLE IF EXISTS dbo.final_result
 -- Final results
@@ -319,16 +320,14 @@ FROM @table
 
 
 SELECT 
-  tik AS Clause_name
- ,tok AS Object_Name
+  [command_] AS Clause_name
+ ,[location_] AS Object_Name
  ,rn AS order_DL
  FROM dbo.final_result
 
 
 END;
 GO
-
-
 
 
 /* **************************
